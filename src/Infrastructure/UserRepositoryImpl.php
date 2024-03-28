@@ -7,6 +7,7 @@ namespace App\Infrastructure;
 use App\Dto\CreateUserDto;
 use App\Entity\User;
 use App\Exceptions\UserAlreadyExists;
+use App\Exceptions\UserCreateException;
 use App\Repository\UserRepository;
 use App\ValueObject\Email;
 use App\ValueObject\UserId;
@@ -26,27 +27,30 @@ class UserRepositoryImpl implements UserRepository {
 	}
 
 	public function createUser(CreateUserDto $newUser): void {
-		$user = $this->findByUsername($newUser->getUsername());
+		$this->validateNewUser($newUser);
+		$user = $this->findUserByUsername($newUser->getUsername());
 
 		if ($user !== null) {
-			throw new UserAlreadyExists('User already exists');
+			throw UserAlreadyExists::create('User already exists');
 		}
 
-		$stmt = $this->pdo->prepare('INSERT INTO users (username, email) VALUES (:username, :email)');
+		$stmt = $this->pdo->prepare(
+			'INSERT INTO users (username, email, updated_at) VALUES (:username, :email, NOW())'
+		);
 		$stmt->execute([
 			'email' => $newUser->getEmail(),
 			'username' => $newUser->getUsername(),
 		]);
 	}
 
-	public function findByUserId(string $id): ?User {
-		$stmt = $this->pdo->prepare('SELECT user_id FROM users WHERE user_id = :id');
+	public function findUserById(string $id): ?User {
+		$stmt = $this->pdo->prepare('SELECT user_id, username, email FROM users WHERE user_id = :id');
 		$stmt->execute(['id' => $id]);
 		return $this->fetch($stmt);
 	}
 
-	public function findByUsername(string $username): ?User {
-		$stmt = $this->pdo->prepare('SELECT user_id FROM users WHERE username = :username');
+	public function findUserByUsername(string $username): ?User {
+		$stmt = $this->pdo->prepare('SELECT user_id, username, email FROM users WHERE username = :username');
 		$stmt->execute(['username' => $username]);
 		return $this->fetch($stmt);
 	}
@@ -64,5 +68,15 @@ class UserRepositoryImpl implements UserRepository {
 		$email = new Email($row['email']);
 
 		return new User($userId, $username, $email);
+	}
+
+	private function validateNewUser(CreateUserDto $newUser): void {
+		if ($newUser->getUsername() === '') {
+			throw new UserCreateException('Username cannot be empty');
+		}
+
+		if ($newUser->getEmail() === '') {
+			throw new UserCreateException('Email cannot be empty');
+		}
 	}
 }

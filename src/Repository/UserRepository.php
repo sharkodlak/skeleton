@@ -10,5 +10,7 @@ use App\Entity\User;
 interface UserRepository {
 	public function createUser(CreateUserDto $newUser): void;
 
-	public function findByUserId(string $id): ?User;
+	public function findUserById(string $id): ?User;
+
+	public function findUserByUsername(string $username): ?User;
 }

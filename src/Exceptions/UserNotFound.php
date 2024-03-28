@@ -6,9 +6,9 @@ namespace App\Exceptions;
 
 use Throwable;
 
-class UserAlreadyExists extends UserCreateException {
+class UserNotFound extends UserCreateException {
 	public static function create(?string $message = null, ?Throwable $previous = null): self {
-		$message ??= 'User already exists.';
-		return new self($message, 409, $previous);
+		$message ??= 'User not found.';
+		return new self($message, 404, $previous);
 	}
 }

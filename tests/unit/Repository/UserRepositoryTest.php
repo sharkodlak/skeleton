@@ -23,10 +23,10 @@ class UserRepositoryTest extends TestCase {
 		$user = new User($userId, $username, $email);
 		$this->userRepository
 			->expects($this->once())
-			->method('findByUserId')
+			->method('findUserById')
 			->willReturn($user);
 		
-		$this->assertEquals($user, $this->userRepository->findByUserId($userId->getValue()));
+		$this->assertEquals($user, $this->userRepository->findUserById($userId->getValue()));
 	}
 
 	protected function setUp(): void {

@@ -75,6 +75,7 @@
 		<exclude name="Squiz.Commenting.PostStatementComment.Found"/>
 		<exclude name="Squiz.Commenting.VariableComment.Missing"/>
 		<exclude name="Squiz.ControlStructures.InlineIfDeclaration.NoBrackets"/>
+		<exclude name="Squiz.ControlStructures.InlineIfDeclaration.NotSingleLine"/>
 		<exclude name="Squiz.Files.FileExtension.ClassFound"/>
 		<exclude name="Squiz.Formatting.OperatorBracket.MissingBrackets"/>
 		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine"/>
@@ -83,6 +84,7 @@
 		<exclude name="Squiz.Operators.ComparisonOperatorUsage.ImplicitTrue"/>
 		<exclude name="Squiz.Operators.ComparisonOperatorUsage.NotAllowed"/>
 		<exclude name="Squiz.PHP.DisallowBooleanStatement.Found"/>
+		<exclude name="Squiz.PHP.DisallowComparisonAssignment.AssignedBool"/>
 		<exclude name="Squiz.PHP.DisallowComparisonAssignment.AssignedComparison"/>
 		<exclude name="Squiz.PHP.DisallowInlineIf.Found"/>
 		<exclude name="Squiz.Strings.ConcatenationSpacing.PaddingFound"/>
@@ -93,6 +95,11 @@
 		<exclude name="Squiz.WhiteSpace.FunctionSpacing.BeforeFirst"/>
 		<exclude name="Squiz.WhiteSpace.MemberVarSpacing.FirstIncorrect"/>
 		<exclude name="Squiz.WhiteSpace.ObjectOperatorSpacing.Before"/>
+	</rule>
+	<rule ref="Squiz.WhiteSpace.OperatorSpacing">
+		<properties>
+			<property name="ignoreNewlines" value="true"/>
+		</properties>
 	</rule>
 	<rule ref="vendor/slevomat/coding-standard/SlevomatCodingStandard/ruleset.xml">
 		<properties>
