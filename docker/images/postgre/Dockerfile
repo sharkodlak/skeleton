@@ -1,18 +1,12 @@
-FROM postgres:latest
+FROM docker.io/library/postgres:18.6-alpine
 
-ENV TIMEZONE=Europe/Prague
+ENV TZ=Europe/Prague \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
 
-RUN apt-get update && \
-	apt-get install --no-install-recommends -y \
-		gettext \
-		locales \
-		postgresql-contrib \
-		&& \
-	apt-get -qy autoremove && \
-	apt-get -y clean && \
-	rm -rf /var/lib/apt/lists/* && \
-	rm -rf /tmp/*
-
-RUN sed -i '/^# cs_CZ.UTF-8 /s/^# //' /etc/locale.gen && \
-	locale-gen cs_CZ.UTF-8 && \
-	ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+RUN apk add --no-cache \
+        bash \
+        tzdata \
+    && ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo ${TZ} > /etc/timezone \
+    && rm -rf /var/cache/apk/*

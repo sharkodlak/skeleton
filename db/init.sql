@@ -6,11 +6,13 @@ CREATE USER ${MAIN_ROLE} WITH
 	PASSWORD '${MAIN_ROLE_PASS}'
 ;
 
+-- musl (Alpine) has no cs_CZ locale; use ICU collation for cs sorting instead.
 CREATE DATABASE ${DB_NAME} WITH
 	OWNER = ${MAIN_ROLE}
 	ENCODING = UTF8
-	LOCALE = "cs_CZ.utf8"
-	LC_COLLATE = "cs_CZ.utf8"
+	LOCALE = 'C.UTF-8'
+	LOCALE_PROVIDER = icu
+	ICU_LOCALE = 'cs-CZ'
 	TEMPLATE = template0
 ;
 
