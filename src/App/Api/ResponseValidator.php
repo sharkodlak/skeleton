@@ -43,7 +43,7 @@ use Throwable;
  */
 class ResponseValidator implements MiddlewareInterface {
 	public function __construct(
-		private readonly LeagueResponseValidator $validator
+		private readonly LeagueResponseValidator $validator,
 	) {
 	}
 

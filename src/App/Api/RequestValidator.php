@@ -16,7 +16,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class RequestValidator implements MiddlewareInterface {
 	public function __construct(
-		private readonly ServerRequestValidator $validator
+		private readonly ServerRequestValidator $validator,
 	) {
 	}
 

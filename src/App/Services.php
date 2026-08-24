@@ -11,15 +11,15 @@ use Monolog\Logger;
 use PDO;
 use Psr\Log\LoggerInterface;
 
-use function DI\autowire;
 use function DI\create;
 use function DI\value;
 
 /** @phpstan-type ConfigArray array<string, string> */
 class Services {
+	/** @param ContainerBuilder<Container> $containerBuilder */
 	public function __construct(
 		private readonly ContainerBuilder $containerBuilder,
-		private readonly Config $config
+		private readonly Config $config,
 	) {
 	}
 

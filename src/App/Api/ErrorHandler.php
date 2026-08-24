@@ -17,13 +17,13 @@ use Throwable;
  *   code: int,
  *   error: string,
  *   extra?: mixed,
- *   trace?: array,
+ *   trace?: array<int, array<string, mixed>>,
  *   exception?: Throwable
  * }
  */
 class ErrorHandler {
 	public function __construct(
-		private readonly LoggerInterface $logger
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -35,7 +35,7 @@ class ErrorHandler {
 		Throwable $exception,
 		bool $displayErrorDetails,
 		bool $logErrors,
-		bool $logErrorDetails
+		bool $logErrorDetails,
 	): ResponseInterface {
 		$statusCode = $exception instanceof AppRuntimeException ? $exception->getCode() : 500;
 		$errorMessage = $exception->getMessage() !== '' ? $exception->getMessage() : 'Internal Server Error';

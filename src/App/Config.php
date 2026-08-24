@@ -8,22 +8,27 @@ use ArrayAccess;
 use RuntimeException;
 use Symfony\Component\Dotenv\Dotenv;
 
+/** @implements ArrayAccess<string, string> */
 class Config implements ArrayAccess {
 	public function __construct(
 		Dotenv $dotenv,
-		string $envFile = '.env'
+		string $envFile = '.env',
 	) {
 		$dotenv->load($envFile);
 	}
 
 	public function offsetExists(mixed $offset): bool {
+		$offset = (string) $offset;
 		// phpcs:ignore SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable
 		return isset($_ENV[$offset]);
 	}
 
 	public function offsetGet(mixed $offset): string {
+		$offset = (string) $offset;
 		// phpcs:ignore SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable
-		return $_ENV[$offset];
+		$value = $_ENV[$offset];
+		\assert(\is_string($value));
+		return $value;
 	}
 
 	/** @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter */
