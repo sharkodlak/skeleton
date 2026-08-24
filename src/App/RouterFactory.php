@@ -4,19 +4,29 @@ declare(strict_types = 1);
 
 namespace App\App;
 
-use App\UserModule\Controller\UserController;
+use App\App\Api\ValidatorFactory;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
 class RouterFactory {
+	public function __construct(
+		private readonly ValidatorFactory $validatorFactory,
+		private readonly Config $config,
+	) {
+	}
+
+	/** @param App<\Psr\Container\ContainerInterface|null> $slimApp */
 	public function registerRoutes(App $slimApp): void {
+		$slimApp->add($this->validatorFactory->createRequestValidator());
+
+		if ($this->config['OPENAPI_VALIDATE_RESPONSES'] === 'true') {
+			$slimApp->add($this->validatorFactory->createResponseValidator());
+		}
+
 		// phpcs:disable SlevomatCodingStandard.Functions.StaticClosure
+		/** @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter */
 		$slimApp->group('/api/v{apiVersion}', function (RouteCollectorProxy $version): void {
-			$version->group('/user', function (RouteCollectorProxy $user): void {
-				$user->post('', UserController::class . ':createUser');
-				$user->get('/check', UserController::class . ':checkUser');
-				$user->get('/{userId}', UserController::class . ':getUser');
-			});
+			// Register module-specific route groups here.
 		});
 		// phpcs:enable
 	}

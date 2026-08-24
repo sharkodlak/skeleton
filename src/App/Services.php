@@ -16,9 +16,11 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
 use PDO;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 use function DI\create;
+use function DI\factory;
 use function DI\value;
 
 class Services {
@@ -27,6 +29,7 @@ class Services {
 		private readonly ContainerBuilder $containerBuilder,
 		private readonly Config $config,
 		private readonly ValidatorFactory $validatorFactory,
+		private readonly RouterFactory $routerFactory,
 	) {
 	}
 
@@ -34,6 +37,7 @@ class Services {
 		$this->containerBuilder->addDefinitions([
 			...$this->coreDefinition(),
 			...$this->validatorFactoryDefinition(),
+			...$this->slimAppFactoryDefinition(),
 		]);
 		return $this->containerBuilder->build();
 	}
@@ -110,5 +114,18 @@ class Services {
 			'emergency' => Level::Emergency,
 			default => throw new AppRuntimeException(\sprintf('Unknown LOGGER_LEVEL "%s".', $name)),
 		};
+	}
+
+	/** @return array<class-string, DefinitionHelper|Definition> */
+	private function slimAppFactoryDefinition(): array {
+		return [
+			SlimAppFactory::class => factory(
+				fn (ContainerInterface $container, Config $config): SlimAppFactory => new SlimAppFactory(
+					$container,
+					$this->routerFactory,
+					$config
+				)
+			),
+		];
 	}
 }

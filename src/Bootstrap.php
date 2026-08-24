@@ -8,7 +8,6 @@ use App\App\Api\ValidatorFactory;
 use App\App\Config;
 use App\App\RouterFactory;
 use App\App\Services;
-use App\App\SlimAppFactory;
 use DI\Container;
 use DI\ContainerBuilder;
 use Symfony\Component\Dotenv\Dotenv;
@@ -21,19 +20,9 @@ class Bootstrap {
 		$openApiFile = __DIR__ . '/../openapi.yaml';
 		$cacheDir = __DIR__ . '/../var/cache/openapi';
 		$validatorFactory = new ValidatorFactory($openApiFile, $cacheDir);
-		$routerFactory = new RouterFactory();
-		$services = new Services($containerBuilder, $config, $validatorFactory);
-		$container = $services->register();
-		$container->set(
-			SlimAppFactory::class,
-			static fn () => new SlimAppFactory(
-				$container,
-				$routerFactory,
-				$validatorFactory,
-				$config
-			)
-		);
+		$routerFactory = new RouterFactory($validatorFactory, $config);
+		$services = new Services($containerBuilder, $config, $validatorFactory, $routerFactory);
 
-		return $container;
+		return $services->register();
 	}
 }
