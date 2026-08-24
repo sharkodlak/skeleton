@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace App\App;
 
-use App\UserModule\Infrastructure\UserRepositoryImpl;
-use App\UserModule\Repository\UserRepository;
 use Aura\Sql\ExtendedPdo;
 use DI\Container;
 use DI\ContainerBuilder;
@@ -41,7 +39,6 @@ class Services {
 					value($this->config['DB_USER']),
 					value($this->config['DB_PASS'])
 				),
-			UserRepository::class => autowire(UserRepositoryImpl::class),
 		]);
 		return $this->containerBuilder->build();
 	}
