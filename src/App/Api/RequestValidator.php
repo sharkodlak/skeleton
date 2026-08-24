@@ -4,6 +4,10 @@ declare(strict_types = 1);
 
 namespace App\App\Api;
 
+use App\Exceptions\InvalidParameterException;
+use App\Exceptions\InvalidSecurityException;
+use League\OpenAPIValidation\PSR7\Exception\Validation\InvalidSecurity;
+use League\OpenAPIValidation\PSR7\Exception\ValidationFailed;
 use League\OpenAPIValidation\PSR7\ServerRequestValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,7 +21,14 @@ class RequestValidator implements MiddlewareInterface {
 	}
 
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-		$this->validator->validate($request);
+		try {
+			$this->validator->validate($request);
+		} catch (InvalidSecurity $e) {
+			throw new InvalidSecurityException($e->getMessage());
+		} catch (ValidationFailed $e) {
+			throw new InvalidParameterException($e->getMessage());
+		}
+
 		return $handler->handle($request);
 	}
 }
