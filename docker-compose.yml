@@ -1,37 +1,9 @@
 version: '3.8'
 services:
-    nginx:
-        container_name: nginx
-        build:
-            dockerfile: docker/images/nginx/Dockerfile
-            context: .
-        volumes:
-            - ./:/app:cached
-        environment:
-            - NGINX_SERVER_NAME=localhost
-        working_dir: /app
-        ports:
-            - '8080:80'
-        links:
-            - php
-
-    php:
-        container_name: php
-        build:
-            dockerfile: docker/images/php/Dockerfile
-            context: .
-            target: development
-        volumes:
-            - ./:/app:cached
-            - ~/.composer:/root/.composer:delegated
-        working_dir: /app
-        links:
-            - db
-
     db:
         container_name: db
         build:
-            dockerfile: docker/images/postgre/Dockerfile
+            dockerfile: containers/images/postgre/Containerfile
             context: .
         volumes:
             - ./:/app:cached
@@ -48,6 +20,34 @@ services:
             READONLY_ROLE_PASSWORD: readonly
         ports:
             - '5432:5432'
+
+    php:
+        container_name: php
+        build:
+            dockerfile: containers/images/php/Containerfile
+            context: .
+            target: development
+        volumes:
+            - ./:/app:cached
+            - ~/.composer:/root/.composer:delegated
+        working_dir: /app
+        links:
+            - db
+
+    web:
+        container_name: web
+        build:
+            dockerfile: containers/images/nginx/Containerfile
+            context: .
+        volumes:
+            - ./:/app:cached
+        environment:
+            - NGINX_SERVER_NAME=localhost
+        working_dir: /app
+        ports:
+            - '8080:80'
+        links:
+            - php
 
 volumes:
     dbData:
