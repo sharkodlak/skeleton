@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 final class Kernel extends HttpKernel {
@@ -21,7 +22,7 @@ final class Kernel extends HttpKernel {
 			KernelEvents::REQUEST,
 			static function (RequestEvent $event): void {
 				if (RouteConfig::matchesPath($event->getRequest()->getPathInfo())) {
-					$event->setResponse(new JsonResponse([ 'status' => 'ok', 'symfony' => '8.1' ]));
+					$event->setResponse(new JsonResponse([ 'status' => 'ok', 'symfony' => SymfonyKernel::VERSION ]));
 				}
 			},
 		);
@@ -36,7 +37,7 @@ final class Kernel extends HttpKernel {
 
 	public function handle(Request $request, int $type = self::MAIN_REQUEST, bool $catch = true): Response {
 		if (RouteConfig::matchesPath($request->getPathInfo())) {
-			return new JsonResponse([ 'status' => 'ok', 'symfony' => '8.1' ]);
+			return new JsonResponse([ 'status' => 'ok', 'symfony' => SymfonyKernel::VERSION ]);
 		}
 
 		return parent::handle($request, $type, $catch);

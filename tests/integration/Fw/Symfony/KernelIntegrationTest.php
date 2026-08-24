@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 final class KernelIntegrationTest extends TestCase {
 	public function testKernelHandlesStatusRequest(): void {
 		$kernel = new Kernel();
-		$request = Request::create('/status', 'GET');
+		$request = Request::create('/api/status', 'GET');
 
 		$response = $kernel->handle($request);
 

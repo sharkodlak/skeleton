@@ -17,6 +17,7 @@ use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
@@ -26,10 +27,10 @@ use Symfony\Component\Routing\RouteCollection;
 final class SymfonyRuntime {
 	public function handle(Request $request): Response {
 		$routes = new RouteCollection();
-		$routes->add('status', new Route('/status', [
+		$routes->add('status', new Route('/api/status', [
 			'_controller' => static fn (): Response => new JsonResponse([
 				'status' => 'ok',
-				'symfony' => '8.1',
+				'symfony' => SymfonyKernel::VERSION,
 			]),
 		]));
 
@@ -40,7 +41,7 @@ final class SymfonyRuntime {
 
 		$payload = [
 			'status' => 'ok',
-			'symfony' => '8.1',
+			'symfony' => SymfonyKernel::VERSION,
 			'path' => $request->getPathInfo(),
 			'route' => $match['_route'] ?? 'default',
 		];
@@ -49,7 +50,7 @@ final class SymfonyRuntime {
 	}
 
 	public function buildConsole(): Application {
-		$app = new Application('skeleton', '8.1');
+		$app = new Application('skeleton', SymfonyKernel::VERSION);
 		$app->addCommand(new class extends Command {
 			protected static string $defaultName = 'app:status';
 

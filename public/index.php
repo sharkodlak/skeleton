@@ -1,13 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-use App\Bootstrap;
+use App\App\Fw\Symfony\Kernel;
+use Symfony\Component\HttpFoundation\Request;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$container = Bootstrap::boot();
-
-printf("Skeleton booted successfully. Framework-specific entrypoint belongs in a dedicated branch.\n");
-
-unset($container);
+$request = Request::createFromGlobals();
+$response = (new Kernel())->handle($request);
+$response->send();

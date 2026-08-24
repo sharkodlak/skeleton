@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 final class SymfonyRuntimeIntegrationTest extends TestCase {
 	public function testRuntimeReturnsStatusPayloadForRequest(): void {
 		$runtime = new SymfonyRuntime();
-		$response = $runtime->handle(Request::create('/status', 'GET'));
+		$response = $runtime->handle(Request::create('/api/status', 'GET'));
 
 		$this->assertSame(200, $response->getStatusCode());
 		$this->assertSame('ok', \json_decode((string) $response->getContent(), true)['status']);
