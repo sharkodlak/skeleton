@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App;
 
+use App\App\Api\ValidatorFactory;
 use App\App\Config;
 use App\App\Services;
 use DI\Container;
@@ -15,7 +16,10 @@ class Bootstrap {
 		$containerBuilder = new ContainerBuilder();
 		$dotenv = new Dotenv();
 		$config = new Config($dotenv, __DIR__ . '/../.env');
-		$services = new Services($containerBuilder, $config);
+		$openApiFile = __DIR__ . '/../openapi.yaml';
+		$cacheDir = __DIR__ . '/../var/cache/openapi';
+		$validatorFactory = new ValidatorFactory($openApiFile, $cacheDir);
+		$services = new Services($containerBuilder, $config, $validatorFactory);
 
 		return $services->register();
 	}
