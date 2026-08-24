@@ -4,10 +4,39 @@
          name="app">
 
     <arg name="severity" value="1"/>
-    <arg name="cache" value="var/cache/phpcs"/>
+    <arg name="cache" value="var/cache/phpcs.cache"/>
 
     <file>src</file>
     <file>tests</file>
+    <!--file>migrations</file-->
 
     <rule ref="ruleset.xml"></rule>
+
+
+    <!-- Allow longer test files -->
+    <rule ref="SlevomatCodingStandard.Files.FileLength">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Files.FileLength">
+        <properties>
+            <property name="maxLinesLength" value="1000"/>
+        </properties>
+        <include-pattern>tests/*</include-pattern>
+    </rule>
+
+    <!-- Allow long lines in seed files (SQL data rows can contain long JSON payloads) -->
+    <!--rule ref="SlevomatCodingStandard.Files.LineLength.LineTooLong">
+        <exclude-pattern>*/migrations/seed/*</exclude-pattern>
+    </rule-->
+
+    <!-- Allow longer test classes -->
+    <rule ref="SlevomatCodingStandard.Classes.ClassLength">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Classes.ClassLength">
+        <properties>
+            <property name="maxLinesLength" value="1000"/>
+        </properties>
+        <include-pattern>tests/*</include-pattern>
+    </rule>
 </ruleset>
