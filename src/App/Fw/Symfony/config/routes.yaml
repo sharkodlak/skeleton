@@ -1,3 +1,5 @@
 routes:
+  home:
+    path: /
   status:
     path: /api/status
