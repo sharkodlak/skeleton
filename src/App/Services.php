@@ -7,6 +7,8 @@ namespace App\App;
 use App\App\Api\ValidatorFactory;
 use App\App\Log\RequestIdProcessor;
 use App\Exceptions\AppRuntimeException;
+use App\UserModule\Infrastructure\UserRepositoryImpl;
+use App\UserModule\Repository\UserRepository;
 use Aura\Sql\ExtendedPdo;
 use DI\Container;
 use DI\ContainerBuilder;
@@ -18,6 +20,7 @@ use Monolog\Logger;
 use PDO;
 use Psr\Log\LoggerInterface;
 
+use function DI\autowire;
 use function DI\create;
 use function DI\value;
 
@@ -34,6 +37,7 @@ class Services {
 		$this->containerBuilder->addDefinitions([
 			...$this->coreDefinition(),
 			...$this->validatorFactoryDefinition(),
+			...$this->userModuleDefinition(),
 		]);
 		return $this->containerBuilder->build();
 	}
@@ -110,5 +114,12 @@ class Services {
 			'emergency' => Level::Emergency,
 			default => throw new AppRuntimeException(\sprintf('Unknown LOGGER_LEVEL "%s".', $name)),
 		};
+	}
+
+	/** @return array<class-string, DefinitionHelper|Definition> */
+	private function userModuleDefinition(): array {
+		return [
+			UserRepository::class => autowire(UserRepositoryImpl::class),
+		];
 	}
 }
