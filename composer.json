@@ -30,6 +30,7 @@
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpunit/phpunit": "^12.4",
+        "robmorgan/phinx": "^0.16.12",
         "shipmonk/composer-dependency-analyser": "^1.8",
         "slevomat/coding-standard": "^8.24",
         "spaze/phpstan-disallowed-calls": "^4.6",
@@ -55,6 +56,9 @@
     },
     "scripts": {
         "cmd:fix": "@cmd:phpcbf",
+        "cmd:db:migrate": "@php vendor/bin/phinx migrate",
+        "cmd:db:seed": "@php vendor/bin/phinx seed:run",
+        "cmd:db:status": "@php vendor/bin/phinx status",
         "cmd:lint": "@php vendor/bin/parallel-lint -e php -j 8 src tests",
         "cmd:phpcs": "@php vendor/bin/phpcs -ps --colors --parallel=8",
         "cmd:phpcbf": "@php vendor/bin/phpcbf -p --parallel=8",

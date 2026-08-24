@@ -26,6 +26,15 @@ help: ## Show available targets
 build: ## Build the project containers without cache
 	$(COMPOSE) build --no-cache
 
+db-migrate: ## Run Phinx migrations
+	$(COMPOSE) exec $(SERVICE) composer cmd:db:migrate
+
+db-seed: ## Run Phinx seeds
+	$(COMPOSE) exec $(SERVICE) composer cmd:db:seed
+
+db-status: ## Show Phinx migration status
+	$(COMPOSE) exec $(SERVICE) composer cmd:db:status
+
 down: stop ## Alias for stop
 
 exec: ## Open a shell in a container (usage: make exec [service])
@@ -36,9 +45,6 @@ fix: ## Run code formatter
 
 in: ## Open a shell in a service, same as exec
 	@$(MAKE) --silent exec SERVICE=$(SERVICE) $(ARGS)
-
-migrate: ## Run DB migration script
-	$(COMPOSE) exec db db/migrations/migrate.sh
 
 restart: ## Restart the stack
 	$(COMPOSE) restart
@@ -56,4 +62,4 @@ qa: ## Run project QA checks
 
 up: start ## Alias for start
 
-.PHONY: help build down exec fix in migrate restart start stop test qa up
+.PHONY: help build db-migrate db-seed db-status down exec fix in restart start stop test qa up
