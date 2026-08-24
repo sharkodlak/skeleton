@@ -22,7 +22,6 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Yaml\Yaml;
 
 final class SymfonyRuntime {
 	public function handle(Request $request): Response {
@@ -95,33 +94,6 @@ final class SymfonyRuntime {
 
 	/** @return array<string, array{path: string}> */
 	public function routes(): array {
-		$config = Yaml::parseFile(__DIR__ . '/config/routes.yaml');
-
-		if (!\is_array($config) || !\is_array($config['routes'] ?? null)) {
-			return [];
-		}
-
-		/** @var array<string, array{path?: string}> $routeConfig */
-		$routeConfig = $config['routes'];
-		return $this->normalizeRoutes($routeConfig);
-	}
-
-	/**
-	 * @param array<string, array{path?: string}> $routes
-	 * @return array<string, array{path: string}>
-	 */
-	private function normalizeRoutes(array $routes): array {
-		/** @var array<string, array{path: string}> $normalized */
-		$normalized = [];
-
-		foreach ($routes as $name => $definition) {
-			if (!\is_array($definition) || !\is_string($definition['path'] ?? null)) {
-				continue;
-			}
-
-			$normalized[(string) $name] = [ 'path' => $definition['path'] ];
-		}
-
-		return $normalized;
+		return RouteConfig::all();
 	}
 }

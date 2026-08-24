@@ -20,7 +20,7 @@ final class Kernel extends HttpKernel {
 		$dispatcher->addListener(
 			KernelEvents::REQUEST,
 			static function (RequestEvent $event): void {
-				if ($event->getRequest()->getPathInfo() === '/status') {
+				if (RouteConfig::matchesPath($event->getRequest()->getPathInfo())) {
 					$event->setResponse(new JsonResponse([ 'status' => 'ok', 'symfony' => '8.1' ]));
 				}
 			},
@@ -35,7 +35,7 @@ final class Kernel extends HttpKernel {
 	}
 
 	public function handle(Request $request, int $type = self::MAIN_REQUEST, bool $catch = true): Response {
-		if ($request->getPathInfo() === '/status') {
+		if (RouteConfig::matchesPath($request->getPathInfo())) {
 			return new JsonResponse([ 'status' => 'ok', 'symfony' => '8.1' ]);
 		}
 
