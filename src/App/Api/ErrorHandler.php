@@ -9,6 +9,7 @@ use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use Slim\Exception\HttpException;
 use Throwable;
 
 /**
@@ -37,7 +38,9 @@ class ErrorHandler {
 		bool $logErrors,
 		bool $logErrorDetails,
 	): ResponseInterface {
-		$statusCode = $exception instanceof AppRuntimeException ? $exception->getCode() : 500;
+		$statusCode = $exception instanceof HttpException || $exception instanceof AppRuntimeException
+			? $exception->getCode()
+			: 500;
 		$errorMessage = $exception->getMessage() !== '' ? $exception->getMessage() : 'Internal Server Error';
 		$data = [
 			'code' => $statusCode,

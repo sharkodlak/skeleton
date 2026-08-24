@@ -1,9 +1,13 @@
-# Skeleton for PHP projects
+# Skeleton for PHP projects — Slim 4
 
-This repository is intentionally kept framework-agnostic on the main branch.
-The shared project structure, conventions, and base configuration live here.
-Framework-specific implementations are maintained in dedicated branches created from main.
-Use main as the baseline when creating a new framework-specific branch.
+This branch is the Slim 4 implementation of the skeleton. Everything below is
+inherited from `main`, which holds the framework-agnostic structure,
+conventions and base configuration; rebase this branch onto `main` to pick up
+changes made there.
+
+What this branch adds is the HTTP layer: `public/index.php` builds a Slim
+application through `SlimAppFactory`, routes come from `RouterFactory`, and
+requests and responses are validated against `openapi.yaml`.
 
 ## Getting started
 
