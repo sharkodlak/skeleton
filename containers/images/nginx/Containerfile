@@ -8,6 +8,7 @@ ENV NGINX_SERVER_NAME=localhost \
 
 # The entrypoint of the nginx image expands ${...} in /etc/nginx/templates only.
 # A config placed straight into conf.d/ keeps the placeholders verbatim.
+COPY ./containers/images/nginx/logging.conf.template /etc/nginx/templates/00-logging.conf.template
 COPY ./containers/images/nginx/site.conf.template /etc/nginx/templates/default.conf.template
 
 # Static assets travel with the image, so the container needs no bind mount.

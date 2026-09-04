@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\App;
 
 use App\App\Api\ValidatorFactory;
+use App\App\Log\RequestIdProcessor;
 use App\Exceptions\AppRuntimeException;
 use Aura\Sql\ExtendedPdo;
 use DI\Container;
@@ -46,7 +47,11 @@ class Services {
 			// project root -- php-fpm, for one.
 			Config::class => value($this->config),
 			LoggerInterface::class => create(Logger::class)
-				->constructor(value('App'), value([ $this->logHandler() ])),
+				->constructor(
+					value('App'),
+					value([ $this->logHandler() ]),
+					value([ new RequestIdProcessor() ]),
+				),
 			PDO::class => create(ExtendedPdo::class)
 				->constructor(
 					value(
