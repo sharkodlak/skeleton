@@ -1,0 +1,9 @@
+# PHPStan configuration for the test suite.
+#
+# Inherits the production ruleset from the repository root; relax rules here
+# only when a genuinely test-specific pattern (data providers, mocks,
+# intentionally invalid input) makes it necessary.
+#
+# The analysed paths are passed on the command line by `composer cmd:phpstan-tests`.
+includes:
+	- ../phpstan.neon.dist

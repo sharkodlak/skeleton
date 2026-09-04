@@ -1,6 +1,9 @@
 TARGET := $(firstword $(MAKECMDGOALS))
 ARGS := $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
 SERVICE ?= php
+## Forward Xdebug settings from the host into the container, e.g.
+## `XDEBUG_MODE=coverage make qa-fast`.
+XDEBUG_ENV := $(strip $(if $(XDEBUG_MODE),-e XDEBUG_MODE=$(XDEBUG_MODE),) $(if $(XDEBUG_TRIGGER),-e XDEBUG_TRIGGER=$(XDEBUG_TRIGGER),))
 COMPOSE := $(shell \
 	if command -v podman-compose >/dev/null 2>&1; then \
 		printf '%s' podman-compose; \
@@ -41,7 +44,7 @@ exec: ## Open a shell in a container (usage: make exec [service])
 	$(COMPOSE) exec $(SERVICE) bash
 
 fix: ## Run code formatter
-	$(COMPOSE) exec $(SERVICE) composer cmd:fix
+	$(COMPOSE) exec $(XDEBUG_ENV) $(SERVICE) composer cmd:fix
 
 in: ## Open a shell in a service, same as exec
 	@$(MAKE) --silent exec SERVICE=$(SERVICE) $(ARGS)
@@ -61,9 +64,18 @@ stop: ## Stop containers
 
 test: qa ## Alias for qa
 
-qa: ## Run project QA checks
-	$(COMPOSE) exec $(SERVICE) composer cmd:qa
+qa: ## Run the full QA suite (currently the same as qa-slow)
+	$(COMPOSE) exec $(XDEBUG_ENV) $(SERVICE) composer cmd:qa
+
+qa-fast: ## Run fast QA checks (lint, phpcs, phpstan, parallel unit tests)
+	$(COMPOSE) exec $(XDEBUG_ENV) $(SERVICE) composer cmd:qa:fast
+
+qa-mid: ## Run fast QA checks plus integration tests
+	$(COMPOSE) exec $(XDEBUG_ENV) $(SERVICE) composer cmd:qa:mid
+
+qa-slow: ## Alias for qa
+	$(COMPOSE) exec $(XDEBUG_ENV) $(SERVICE) composer cmd:qa:slow
 
 up: start ## Alias for start
 
-.PHONY: help build db-migrate db-seed db-status down exec fix in install restart start stop test qa up
+.PHONY: help build db-migrate db-seed db-status down exec fix in install restart start stop test qa qa-fast qa-mid qa-slow up

@@ -62,22 +62,34 @@
         "cmd:lint": "@php vendor/bin/parallel-lint -e php -j 8 src tests",
         "cmd:phpcs": "@php vendor/bin/phpcs -ps --colors --parallel=8",
         "cmd:phpcbf": "@php vendor/bin/phpcbf -p --parallel=8",
-        "cmd:phpstan": "@php vendor/bin/phpstan analyse",
+        "cmd:phpstan": "@php vendor/bin/phpstan analyse --memory-limit=1G",
         "cmd:phpstan-baseline": "@cmd:phpstan --generate-baseline",
-        "cmd:phpstan-tests": "@cmd:phpstan tests --configuration app/tests/phpstan.neon",
+        "cmd:phpstan-tests": "@cmd:phpstan tests --configuration tests/phpstan.neon",
         "cmd:require": "@php vendor/bin/composer-dependency-analyser",
         "cmd:tests": [
             "@cmd:tests:unit",
             "@cmd:tests:integration"
         ],
-        "cmd:tests:unit": "@php vendor/bin/phpunit --testsuite Unit",
-        "cmd:tests:integration": "@php vendor/bin/phpunit --testsuite Integration",
+        "cmd:tests:unit": "sh -c 'vendor/bin/phpunit --testsuite Unit $(echo \"$XDEBUG_MODE\" | grep -q coverage || echo --no-coverage)'",
+        "cmd:tests:unit:parallel": "sh -c 'vendor/bin/paratest --testsuite Unit --processes=$(nproc) $(echo \"$XDEBUG_MODE\" | grep -q coverage || echo --no-coverage)'",
+        "cmd:tests:integration": "sh -c 'vendor/bin/phpunit --testsuite Integration $(echo \"$XDEBUG_MODE\" | grep -q coverage || echo --no-coverage)'",
         "cmd:qa": [
+            "@cmd:qa:slow"
+        ],
+        "cmd:qa:fast": [
             "@cmd:lint",
             "@cmd:phpcs",
             "@cmd:phpstan",
-            "@cmd:require",
-            "@cmd:tests"
+            "@cmd:phpstan-tests",
+            "@cmd:tests:unit:parallel",
+            "@cmd:require"
+        ],
+        "cmd:qa:mid": [
+            "@cmd:qa:fast",
+            "@cmd:tests:integration"
+        ],
+        "cmd:qa:slow": [
+            "@cmd:qa:mid"
         ]
     }
 }
