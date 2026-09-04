@@ -46,6 +46,10 @@ fix: ## Run code formatter
 in: ## Open a shell in a service, same as exec
 	@$(MAKE) --silent exec SERVICE=$(SERVICE) $(ARGS)
 
+install: ## Create .env from .env.example (if missing) and start the stack
+	@test -f .env || cp .env.example .env
+	@$(MAKE) --silent start
+
 restart: ## Restart the stack
 	$(COMPOSE) restart
 
@@ -62,4 +66,4 @@ qa: ## Run project QA checks
 
 up: start ## Alias for start
 
-.PHONY: help build db-migrate db-seed db-status down exec fix in restart start stop test qa up
+.PHONY: help build db-migrate db-seed db-status down exec fix in install restart start stop test qa up

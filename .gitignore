@@ -1,1 +1,18 @@
-vendor/
+# Local environment (copy .env.example to .env)
+/.env
+/.env.local
+
+# Composer dependencies
+/vendor/
+
+# Test runner leftovers
+.phpunit.result.cache
+
+# IDE
+/.idea/
+/.vscode/*
+!/.vscode/launch.json
+
+# OS
+.DS_Store
+Thumbs.db

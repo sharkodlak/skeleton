@@ -1,0 +1,36 @@
+# Version control
+/.git
+/.gitattributes
+/.github
+/.gitignore
+
+# Container / compose definitions (Containerfiles COPY what they need explicitly)
+/.dockerignore
+/docker-compose.yml
+/docker-compose.override.yml
+/docker-compose.override.example.yml
+
+# IDE and editors
+/.editorconfig
+/.idea
+/.vscode
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Installed during the build, never copied from the host
+/vendor
+
+# Runtime artifacts
+/var/cache/*
+/var/coverage/*
+/var/log/*
+.phpunit.result.cache
+
+# Local environment
+/.env
+/.env.local
