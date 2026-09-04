@@ -15,7 +15,10 @@ final class SymfonyRuntimeIntegrationTest extends TestCase {
 		$runtime = new SymfonyRuntime();
 		$response = $runtime->handle(Request::create('/api/status', 'GET'));
 
-		$this->assertSame(200, $response->getStatusCode());
-		$this->assertSame('ok', \json_decode((string) $response->getContent(), true)['status']);
+		self::assertSame(200, $response->getStatusCode());
+
+		$payload = \json_decode((string) $response->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+		self::assertIsArray($payload);
+		self::assertSame('ok', $payload['status']);
 	}
 }

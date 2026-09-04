@@ -17,7 +17,10 @@ final class KernelIntegrationTest extends TestCase {
 
 		$response = $kernel->handle($request);
 
-		$this->assertSame(200, $response->getStatusCode());
-		$this->assertSame('ok', \json_decode((string) $response->getContent(), true)['status']);
+		self::assertSame(200, $response->getStatusCode());
+
+		$payload = \json_decode((string) $response->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+		self::assertIsArray($payload);
+		self::assertSame('ok', $payload['status']);
 	}
 }

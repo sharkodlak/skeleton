@@ -14,16 +14,19 @@ final class ApplicationTest extends TestCase {
 		$app = new Application();
 		$response = $app->handle(Request::create('/', 'GET'));
 
-		$this->assertSame(200, $response->getStatusCode());
-		$this->assertStringContainsString('Hello Symfony', (string) $response->getContent());
-		$this->assertStringContainsString(Kernel::VERSION, (string) $response->getContent());
+		self::assertSame(200, $response->getStatusCode());
+		self::assertStringContainsString('Hello Symfony', (string) $response->getContent());
+		self::assertStringContainsString(Kernel::VERSION, (string) $response->getContent());
 	}
 
 	public function testItReturnsStatusJsonForApiRoute(): void {
 		$app = new Application();
 		$response = $app->handle(Request::create('/api/status', 'GET'));
 
-		$this->assertSame(200, $response->getStatusCode());
-		$this->assertSame('ok', \json_decode((string) $response->getContent(), true)['status']);
+		self::assertSame(200, $response->getStatusCode());
+
+		$payload = \json_decode((string) $response->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+		self::assertIsArray($payload);
+		self::assertSame('ok', $payload['status']);
 	}
 }

@@ -13,7 +13,7 @@ final class TemplateRendererTest extends TestCase {
 
 		$output = $renderer->render('home.php', [ 'message' => 'Hello world' ]);
 
-		$this->assertStringContainsString('Hello world', $output);
-		$this->assertStringContainsString('<html', $output);
+		self::assertStringContainsString('Hello world', $output);
+		self::assertStringContainsString('<html', $output);
 	}
 }
