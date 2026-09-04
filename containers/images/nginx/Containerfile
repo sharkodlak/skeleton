@@ -12,3 +12,14 @@ COPY ./containers/images/nginx/site.conf.template /etc/nginx/templates/default.c
 
 # Static assets travel with the image, so the container needs no bind mount.
 COPY ./public /app/public
+
+COPY ./containers/images/nginx/docker-entrypoint-wrapper.sh /docker-entrypoint-wrapper.sh
+RUN chmod +x /docker-entrypoint-wrapper.sh
+
+# Wraps the image's own entrypoint, which still renders the templates and
+# runs the CMD inherited from the base image.
+ENTRYPOINT ["/docker-entrypoint-wrapper.sh"]
+
+# Declaring ENTRYPOINT resets the CMD inherited from the base image, so the
+# command the entrypoint is supposed to exec has to be restated here.
+CMD ["nginx", "-g", "daemon off;"]

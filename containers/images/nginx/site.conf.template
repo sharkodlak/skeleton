@@ -8,6 +8,11 @@ server {
 	root /app/public;
 	index index.html index.php;
 
+	# Re-resolve the upstream instead of caching it for the lifetime of the
+	# process; see docker-entrypoint-wrapper.sh for why.
+	resolver ${DNS_RESOLVER} valid=10s ipv6=off;
+	set $php_backend ${PHP_UPSTREAM};
+
 	location /api/ {
 		try_files $uri $uri/ /index.php$is_args$args;
 	}
@@ -21,7 +26,7 @@ server {
 		fastcgi_split_path_info ^(.+?\.php)(/.*)$;
 		fastcgi_index index.php;
 
-		fastcgi_pass ${PHP_UPSTREAM};
+		fastcgi_pass $php_backend;
 
 		include fastcgi_params;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
