@@ -82,6 +82,11 @@ if [ -n "${DB_HOST:-}" ]; then
 	run_step "Waiting for database ${DB_HOST}" wait_for_database
 fi
 
+# Daily log rotation. Alpine's default root crontab already runs
+# /etc/periodic/daily; crond just has to be alive to trigger it. It logs to
+# syslog by default, which no container runs, so point it at stderr.
+run_step 'Starting cron for log rotation' crond -b -L /dev/stderr
+
 touch "$READY_MARKER"
 log_step 'Startup complete, handing over to php-fpm'
 

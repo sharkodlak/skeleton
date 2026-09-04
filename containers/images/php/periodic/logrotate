@@ -1,0 +1,4 @@
+#!/bin/sh
+# Run by busybox crond through /etc/periodic/daily, which Alpine's default root
+# crontab already executes once a day.
+exec logrotate /etc/logrotate.conf

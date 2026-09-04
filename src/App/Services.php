@@ -5,11 +5,14 @@ declare(strict_types = 1);
 namespace App\App;
 
 use App\App\Api\ValidatorFactory;
+use App\Exceptions\AppRuntimeException;
 use Aura\Sql\ExtendedPdo;
 use DI\Container;
 use DI\ContainerBuilder;
 use DI\Definition\Definition;
 use DI\Definition\Helper\DefinitionHelper;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
 use Monolog\Logger;
 use PDO;
 use Psr\Log\LoggerInterface;
@@ -43,7 +46,7 @@ class Services {
 			// project root -- php-fpm, for one.
 			Config::class => value($this->config),
 			LoggerInterface::class => create(Logger::class)
-				->constructor(value('App')),
+				->constructor(value('App'), value([ $this->logHandler() ])),
 			PDO::class => create(ExtendedPdo::class)
 				->constructor(
 					value(
@@ -68,5 +71,39 @@ class Services {
 		return [
 			ValidatorFactory::class => value($this->validatorFactory),
 		];
+	}
+
+	/**
+	 * Logs go to stderr, so the container runtime collects them; nothing writes
+	 * files out of the box. A project that wants files can swap this handler --
+	 * logrotate is already configured for var/log in the image.
+	 */
+	private function logHandler(): StreamHandler {
+		return new StreamHandler('php://stderr', $this->logLevel());
+	}
+
+	/**
+	 * Monolog's own converters are annotated with a union of string literals, which
+	 * a value read from configuration can never satisfy, so the mapping is spelled
+	 * out here instead.
+	 */
+	private function logLevel(): Level {
+		if (!isset($this->config['LOGGER_LEVEL'])) {
+			return Level::Debug;
+		}
+
+		$name = \strtolower($this->config['LOGGER_LEVEL']);
+
+		return match ($name) {
+			'debug' => Level::Debug,
+			'info' => Level::Info,
+			'notice' => Level::Notice,
+			'warning' => Level::Warning,
+			'error' => Level::Error,
+			'critical' => Level::Critical,
+			'alert' => Level::Alert,
+			'emergency' => Level::Emergency,
+			default => throw new AppRuntimeException(\sprintf('Unknown LOGGER_LEVEL "%s".', $name)),
+		};
 	}
 }

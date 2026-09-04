@@ -1,0 +1,16 @@
+# The application logs to stderr by default, so this rotates nothing until a
+# project adds a file handler. It is here so that the moment one does, the logs
+# cannot fill the volume.
+/app/var/log/*.log {
+	su root root
+	daily
+	rotate 7
+	maxsize 100M
+	compress
+	delaycompress
+	missingok
+	notifempty
+	# PHP-FPM and Monolog hold the file open, so the file must be truncated in
+	# place rather than renamed out from under them.
+	copytruncate
+}

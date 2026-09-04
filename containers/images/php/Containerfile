@@ -9,6 +9,7 @@ RUN apk add --no-cache \
         git \
         libpq \
         libzip \
+        logrotate \
         postgresql-dev \
         tzdata \
         unzip \
@@ -22,8 +23,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN docker-php-ext-install pdo_pgsql
 
+COPY ./containers/images/php/logrotate /etc/logrotate.d/app
+COPY ./containers/images/php/periodic/logrotate /etc/periodic/daily/logrotate
 COPY ./containers/images/php/init.sh /docker-entrypoint-init.d/init.sh
-RUN chmod +x /docker-entrypoint-init.d/init.sh
+RUN chmod 644 /etc/logrotate.d/app \
+    && chmod +x /etc/periodic/daily/logrotate /docker-entrypoint-init.d/init.sh
 
 EXPOSE 9000
 
