@@ -18,7 +18,9 @@ $dbNameTest = $dbName . '_test';
 return [
 	'paths' => [
 		'migrations' => __DIR__ . '/db/migrations',
-		'seeds' => __DIR__ . '/db/seeds',
+		// Namespaced so the seed class name can match its file name, which the
+		// coding standard checks. Migrations cannot: Phinx owns their file names.
+		'seeds' => ['Db\Seeds' => __DIR__ . '/db/seeds'],
 	],
 	'environments' => [
 		'default_migration_table' => 'phinxlog',

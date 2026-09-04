@@ -19,6 +19,7 @@
 	<rule ref="vendor/slevomat/coding-standard/SlevomatCodingStandard/ruleset.xml">
 		<properties>
 			<property name="rootNamespaces" type="array">
+				<element key="db/seeds" value="Db\Seeds"/>
 				<element key="src" value="App"/>
 				<element key="tests/Fixtures" value="Tests\Fixtures"/>
 				<element key="tests/integration" value="Tests\Integration"/>

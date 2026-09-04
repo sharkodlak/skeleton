@@ -21,40 +21,6 @@ use RuntimeException;
 abstract class IntegrationTestCase extends TestCase {
 	private static ?PDO $connection = null;
 
-	protected function getConnection(): PDO {
-		if (self::$connection === null) {
-			self::$connection = self::connect();
-		}
-
-		return self::$connection;
-	}
-
-	/**
-	 * Empties every table of the test schema, leaving the schema itself and the
-	 * Phinx migration log intact. Call it from setUp() to give each test a known
-	 * starting point.
-	 */
-	protected function truncateAllTables(): void {
-		$connection = $this->getConnection();
-		$statement = $connection->query(
-			"SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename <> 'phinxlog'",
-		);
-
-		if ($statement === false) {
-			throw new RuntimeException('Unable to list the tables of the test database.');
-		}
-
-		/** @var list<string> $tables */
-		$tables = $statement->fetchAll(PDO::FETCH_COLUMN);
-
-		if ($tables === []) {
-			return;
-		}
-
-		$quoted = \array_map(static fn (string $table): string => '"' . $table . '"', $tables);
-		$connection->exec('TRUNCATE TABLE ' . \implode(', ', $quoted) . ' RESTART IDENTITY CASCADE');
-	}
-
 	private static function connect(): PDO {
 		$name = self::readEnv('DB_NAME');
 
@@ -89,5 +55,39 @@ abstract class IntegrationTestCase extends TestCase {
 		}
 
 		return $value;
+	}
+
+	protected function getConnection(): PDO {
+		if (self::$connection === null) {
+			self::$connection = self::connect();
+		}
+
+		return self::$connection;
+	}
+
+	/**
+	 * Empties every table of the test schema, leaving the schema itself and the
+	 * Phinx migration log intact. Call it from setUp() to give each test a known
+	 * starting point.
+	 */
+	protected function truncateAllTables(): void {
+		$connection = $this->getConnection();
+		$statement = $connection->query(
+			"SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename <> 'phinxlog'",
+		);
+
+		if ($statement === false) {
+			throw new RuntimeException('Unable to list the tables of the test database.');
+		}
+
+		/** @var list<string> $tables */
+		$tables = $statement->fetchAll(PDO::FETCH_COLUMN);
+
+		if ($tables === []) {
+			return;
+		}
+
+		$quoted = \array_map(static fn (string $table): string => '"' . $table . '"', $tables);
+		$connection->exec('TRUNCATE TABLE ' . \implode(', ', $quoted) . ' RESTART IDENTITY CASCADE');
 	}
 }

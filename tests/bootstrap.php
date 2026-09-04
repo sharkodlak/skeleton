@@ -21,16 +21,20 @@ require __DIR__ . '/../vendor/autoload.php';
  */
 $envFile = __DIR__ . '/../.env';
 
-if (\is_file($envFile)) {
-	$contents = \file_get_contents($envFile);
-	\assert(\is_string($contents));
+if (is_file($envFile)) {
+	$contents = file_get_contents($envFile);
+	assert(is_string($contents));
 
-	foreach ((new Dotenv())->parse($contents, $envFile) as $name => $value) {
-		if (\getenv($name) !== false) {
+	// Dotenv::parse() is annotated as a plain array, so the entries are narrowed
+	// at runtime below rather than through a type hint the standard disallows.
+	$values = (new Dotenv())->parse($contents, $envFile);
+
+	foreach ($values as $name => $value) {
+		if (!is_string($name) || !is_string($value) || getenv($name) !== false) {
 			continue;
 		}
 
-		\putenv($name . '=' . $value);
+		putenv($name . '=' . $value);
 		// phpcs:ignore SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable
 		$_ENV[$name] = $value;
 		// phpcs:ignore SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable
@@ -38,11 +42,11 @@ if (\is_file($envFile)) {
 	}
 }
 
-$dbName = (string) \getenv('DB_NAME');
+$dbName = (string) getenv('DB_NAME');
 
-if ($dbName !== '' && !\str_ends_with($dbName, '_test')) {
+if ($dbName !== '' && !str_ends_with($dbName, '_test')) {
 	$dbName .= '_test';
-	\putenv('DB_NAME=' . $dbName);
+	putenv('DB_NAME=' . $dbName);
 	// phpcs:ignore SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable
 	$_ENV['DB_NAME'] = $dbName;
 	// phpcs:ignore SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable

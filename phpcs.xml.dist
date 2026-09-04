@@ -6,6 +6,7 @@
     <arg name="severity" value="1"/>
     <arg name="cache" value="var/cache/phpcs.cache"/>
 
+    <file>db</file>
     <file>src</file>
     <file>tests</file>
     <!--file>migrations</file-->
@@ -25,9 +26,23 @@
     </rule>
 
     <!-- Allow long lines in seed files (SQL data rows can contain long JSON payloads) -->
-    <!--rule ref="SlevomatCodingStandard.Files.LineLength.LineTooLong">
-        <exclude-pattern>*/migrations/seed/*</exclude-pattern>
-    </rule-->
+    <rule ref="SlevomatCodingStandard.Files.LineLength.LineTooLong">
+        <exclude-pattern>db/seeds/*</exclude-pattern>
+    </rule>
+
+    <!-- Phinx dictates the migration file name (20240824010101_enable_uuid_extension.php),
+         which can never match the class name the rule expects. -->
+    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+        <exclude-pattern>db/migrations/*</exclude-pattern>
+    </rule>
+
+    <!-- A migration is one long linear script; splitting it up would hurt readability. -->
+    <rule ref="SlevomatCodingStandard.Functions.FunctionLength">
+        <properties>
+            <property name="maxLinesLength" value="40"/>
+        </properties>
+        <include-pattern>db/migrations/*</include-pattern>
+    </rule>
 
     <!-- Allow longer test classes -->
     <rule ref="SlevomatCodingStandard.Classes.ClassLength">
