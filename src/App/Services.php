@@ -37,6 +37,11 @@ class Services {
 	/** @return array<class-string, DefinitionHelper|Definition> */
 	private function coreDefinition(): array {
 		return [
+			// Hand out the instance Bootstrap built, which knows the absolute path
+			// to .env. Without this the container autowires a fresh Config with the
+			// relative default and fails wherever the working directory is not the
+			// project root -- php-fpm, for one.
+			Config::class => value($this->config),
 			LoggerInterface::class => create(Logger::class)
 				->constructor(value('App')),
 			PDO::class => create(ExtendedPdo::class)
