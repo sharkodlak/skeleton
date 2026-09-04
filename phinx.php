@@ -11,6 +11,9 @@ $dbName = (string) getenv('DB_NAME');
 $dbUser = (string) getenv('DB_USER');
 $dbPass = (string) getenv('DB_PASS');
 $dbPort = (int) getenv('DB_PORT');
+// Tests run against a separate database so that a migration or seed can never
+// overwrite development data. The name is derived from DB_NAME on purpose.
+$dbNameTest = $dbName . '_test';
 
 return [
 	'paths' => [
@@ -41,7 +44,7 @@ return [
 		'testing' => [
 			'adapter' => 'pgsql',
 			'host' => $dbHost,
-			'name' => $dbName,
+			'name' => $dbNameTest,
 			'user' => $dbUser,
 			'pass' => $dbPass,
 			'port' => $dbPort,

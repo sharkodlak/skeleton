@@ -38,6 +38,20 @@ db-seed: ## Run Phinx seeds
 db-status: ## Show Phinx migration status
 	$(COMPOSE) exec $(SERVICE) composer cmd:db:status
 
+db-create-test: ## Create the test database (idempotent)
+	$(COMPOSE) exec db create-test-db.sh
+
+db-migrate-test: ## Run Phinx migrations against the test database
+	$(COMPOSE) exec $(SERVICE) composer cmd:db:migrate:test
+
+db-seed-test: ## Run Phinx seeds against the test database
+	$(COMPOSE) exec $(SERVICE) composer cmd:db:seed:test
+
+db-status-test: ## Show Phinx migration status of the test database
+	$(COMPOSE) exec $(SERVICE) composer cmd:db:status:test
+
+db-setup: db-migrate db-create-test db-migrate-test ## Migrate both the development and the test database
+
 down: stop ## Alias for stop
 
 exec: ## Open a shell in a container (usage: make exec [service])
@@ -78,4 +92,4 @@ qa-slow: ## Alias for qa
 
 up: start ## Alias for start
 
-.PHONY: help build db-migrate db-seed db-status down exec fix in install restart start stop test qa qa-fast qa-mid qa-slow up
+.PHONY: help build db-create-test db-migrate db-migrate-test db-seed db-seed-test db-setup db-status db-status-test down exec fix in install restart start stop test qa qa-fast qa-mid qa-slow up
