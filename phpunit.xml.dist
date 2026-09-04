@@ -28,6 +28,19 @@
 		<testsuite name="Integration">
 			<directory suffix="Test.php">tests/integration</directory>
 		</testsuite>
+		<testsuite name="E2e">
+			<directory suffix="Test.php">tests/e2e</directory>
+		</testsuite>
+		<!--
+			Smoke is a read-only health check against an already-deployed stack,
+			so it is deliberately not part of cmd:tests or cmd:qa and must not be
+			added to them: those run in fresh, CI-like environments where nothing
+			is deployed. Run it explicitly instead:
+				SMOKE_BASE_URL=https://example.com composer cmd:tests:smoke
+		-->
+		<testsuite name="Smoke">
+			<directory suffix="Test.php">tests/smoke</directory>
+		</testsuite>
 	</testsuites>
 	<coverage ignoreDeprecatedCodeUnits="true">
 		<report>

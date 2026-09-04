@@ -70,3 +70,27 @@ the `php` service's healthcheck, so `web` waits for a genuinely initialised
 application rather than for a process that merely started. `db` reports health
 through `pg_isready`, and `php` waits for it. The wait loop inside `init.sh`
 covers the same ground for environments that run the image without Compose.
+
+## Test suites
+
+| Suite | Command | Part of `cmd:qa` | What it needs |
+|-------|---------|------------------|---------------|
+| Unit | `cmd:tests:unit:parallel` | `qa:fast` | nothing |
+| Integration | `cmd:tests:integration` | `qa:mid` | the migrated test database |
+| E2e | `cmd:tests:e2e` | `qa:slow` | the local stack running (`make up`) |
+| Smoke | `cmd:tests:smoke` | **no** | a deployed environment |
+
+E2e drives the stack the way a browser does — over HTTP, through nginx, into
+php-fpm — against the stack `make up` starts, so it may create whatever state it
+needs. Point it elsewhere with `E2E_BASE_URL`.
+
+Smoke is a read-only probe of an already-deployed environment and is
+deliberately outside `cmd:qa`: QA runs in fresh, CI-like environments where
+nothing is deployed, so a smoke check there would either fail or be aimed at a
+stack it should not touch. It skips itself unless `SMOKE_BASE_URL` is set:
+
+```bash
+SMOKE_BASE_URL=https://example.com make smoke
+```
+
+Smoke tests must never write — the target may well be production.

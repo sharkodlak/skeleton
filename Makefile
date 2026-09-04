@@ -91,6 +91,9 @@ qa-mid: ## Run fast QA checks plus integration tests
 qa-slow: ## Alias for qa
 	$(COMPOSE) exec $(XDEBUG_ENV) $(SERVICE) composer cmd:qa:slow
 
+smoke: ## Probe a deployed environment (usage: SMOKE_BASE_URL=https://... make smoke)
+	$(COMPOSE) exec -e SMOKE_BASE_URL=$(SMOKE_BASE_URL) $(SERVICE) composer cmd:tests:smoke
+
 up: start ## Alias for start
 
-.PHONY: help build db-create-test db-migrate db-migrate-test db-seed db-seed-test db-setup db-status db-status-test down exec fix in install restart start stop test qa qa-fast qa-mid qa-slow up
+.PHONY: help build db-create-test db-migrate db-migrate-test db-seed db-seed-test db-setup db-status db-status-test down exec fix in install restart start stop smoke test qa qa-fast qa-mid qa-slow up

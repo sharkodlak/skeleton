@@ -22,6 +22,8 @@
 				<element key="db/seeds" value="Db\Seeds"/>
 				<element key="src" value="App"/>
 				<element key="tests/Fixtures" value="Tests\Fixtures"/>
+				<element key="tests/e2e" value="Tests\E2e"/>
+				<element key="tests/smoke" value="Tests\Smoke"/>
 				<element key="tests/integration" value="Tests\Integration"/>
 				<element key="tests/unit" value="Tests\Unit"/>
 			</property>

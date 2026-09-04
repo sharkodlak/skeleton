@@ -50,8 +50,10 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\Fixtures\\": "tests/Fixtures/",
+            "Tests\\E2e\\": "tests/e2e/",
             "Tests\\Integration\\": "tests/integration/",
-            "Tests\\Unit\\": "tests/unit/"
+            "Tests\\Unit\\": "tests/unit/",
+            "Tests\\Smoke\\": "tests/smoke/"
         }
     },
     "scripts": {
@@ -76,6 +78,8 @@
         "cmd:tests:unit": "sh -c 'vendor/bin/phpunit --testsuite Unit $(echo \"$XDEBUG_MODE\" | grep -q coverage || echo --no-coverage)'",
         "cmd:tests:unit:parallel": "sh -c 'vendor/bin/paratest --testsuite Unit --processes=$(nproc) $(echo \"$XDEBUG_MODE\" | grep -q coverage || echo --no-coverage)'",
         "cmd:tests:integration": "sh -c 'vendor/bin/phpunit --testsuite Integration $(echo \"$XDEBUG_MODE\" | grep -q coverage || echo --no-coverage)'",
+        "cmd:tests:e2e": "sh -c 'vendor/bin/phpunit --testsuite E2e $(echo \"$XDEBUG_MODE\" | grep -q coverage || echo --no-coverage)'",
+        "cmd:tests:smoke": "sh -c 'vendor/bin/phpunit --testsuite Smoke $(echo \"$XDEBUG_MODE\" | grep -q coverage || echo --no-coverage)'",
         "cmd:qa": [
             "@cmd:qa:slow"
         ],
@@ -92,7 +96,8 @@
             "@cmd:tests:integration"
         ],
         "cmd:qa:slow": [
-            "@cmd:qa:mid"
+            "@cmd:qa:mid",
+            "@cmd:tests:e2e"
         ]
     }
 }
