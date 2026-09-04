@@ -63,10 +63,21 @@ fix: ## Run code formatter
 in: ## Open a shell in a service, same as exec
 	@$(MAKE) --silent exec SERVICE=$(SERVICE) $(ARGS)
 
+ci: ## Build, start, migrate and run the full QA suite the way CI does
+	@$(MAKE) --silent local-files
+	$(COMPOSE) build
+	$(COMPOSE) up --detach
+	@$(MAKE) --silent wait
+	@$(MAKE) --silent db-setup
+	@$(MAKE) --silent qa
+
 install: ## Create the local .env and compose override (if missing) and start the stack
+	@$(MAKE) --silent local-files
+	@$(MAKE) --silent start
+
+local-files: ## Create .env and docker-compose.override.yml from their examples
 	@test -f .env || cp .env.example .env
 	@test -f docker-compose.override.yml || cp docker-compose.override.example.yml docker-compose.override.yml
-	@$(MAKE) --silent start
 
 restart: ## Restart the stack
 	$(COMPOSE) restart
@@ -76,6 +87,20 @@ start: ## Start containers in background
 
 stop: ## Stop containers
 	$(COMPOSE) down
+
+wait: ## Block until the application reports itself ready
+	@printf 'Waiting for %s' '$(SERVICE)'; \
+	for attempt in $$(seq 1 60); do \
+		if $(COMPOSE) exec -T $(SERVICE) test -f /tmp/app-ready >/dev/null 2>&1; then \
+			printf ' ready\n'; \
+			exit 0; \
+		fi; \
+		printf '.'; \
+		sleep 2; \
+	done; \
+	printf '\ntimed out\n' >&2; \
+	$(COMPOSE) logs $(SERVICE) >&2; \
+	exit 1
 
 test: qa ## Alias for qa
 
@@ -96,4 +121,4 @@ smoke: ## Probe a deployed environment (usage: SMOKE_BASE_URL=https://... make s
 
 up: start ## Alias for start
 
-.PHONY: help build db-create-test db-migrate db-migrate-test db-seed db-seed-test db-setup db-status db-status-test down exec fix in install restart start stop smoke test qa qa-fast qa-mid qa-slow up
+.PHONY: help build ci local-files wait db-create-test db-migrate db-migrate-test db-seed db-seed-test db-setup db-status db-status-test down exec fix in install restart start stop smoke test qa qa-fast qa-mid qa-slow up

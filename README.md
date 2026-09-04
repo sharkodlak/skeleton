@@ -71,6 +71,30 @@ application rather than for a process that merely started. `db` reports health
 through `pg_isready`, and `php` waits for it. The wait loop inside `init.sh`
 covers the same ground for environments that run the image without Compose.
 
+## Continuous integration
+
+```bash
+make ci
+```
+
+`make ci` is the whole pipeline: it creates the local files from their
+examples, builds the images, starts the stack, waits for the application to
+report itself ready, migrates both databases and runs the full QA suite. CI
+runs that one command, so it can never drift into a second definition of the
+PHP version, its extensions or the web server — and the same command reproduces
+a CI failure on a laptop.
+
+Workflows for both hosts are included: [.github/workflows/qa.yml](.github/workflows/qa.yml)
+and [.gitlab-ci.yml](.gitlab-ci.yml). Delete whichever this project does not
+use. They are deliberately thin; the only real difference is that a GitLab
+docker executor has no Docker daemon of its own and needs the dind service,
+while GitHub's runners provide one.
+
+`make wait` on its own blocks until the `php` service creates its readiness
+marker. Starting containers returns as soon as they are created, so anything
+that talks to the application right afterwards — migrations in a script, a
+smoke check — needs it, or it races the startup sequence.
+
 ## Test suites
 
 | Suite | Command | Part of `cmd:qa` | What it needs |
