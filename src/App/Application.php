@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace App\App;
 
-use App\App\Fw\Symfony\RouteConfig;
 use App\App\View\TemplateRenderer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,6 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 
 final readonly class Application {
+	private const string STATUS_PATH = '/api/status';
+
 	public function __construct(
 		private TemplateRenderer $renderer = new TemplateRenderer(),
 	) {
@@ -28,7 +29,7 @@ final readonly class Application {
 			]));
 		}
 
-		if (RouteConfig::matchesPath($request->getPathInfo())) {
+		if ($request->getPathInfo() === self::STATUS_PATH) {
 			return new JsonResponse([ 'status' => 'ok', 'symfony' => SymfonyKernel::VERSION ]);
 		}
 
