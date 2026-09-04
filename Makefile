@@ -4,13 +4,21 @@ SERVICE ?= php
 ## Forward Xdebug settings from the host into the container, e.g.
 ## `XDEBUG_MODE=coverage make qa-fast`.
 XDEBUG_ENV := $(strip $(if $(XDEBUG_MODE),-e XDEBUG_MODE=$(XDEBUG_MODE),) $(if $(XDEBUG_TRIGGER),-e XDEBUG_TRIGGER=$(XDEBUG_TRIGGER),))
+# Probed for convenience on a developer machine; override it when the answer is
+# known -- `make COMPOSE="docker compose" ci`, as the CI workflows do.
+#
+# `podman compose` comes last on purpose. It only delegates to an external
+# provider and still needs a reachable podman socket, so `podman compose
+# version` can succeed on a machine where a build then fails; that is exactly
+# how a GitHub runner, which ships podman alongside docker, picked the wrong
+# tool. The self-contained commands are tried first.
 COMPOSE := $(shell \
 	if command -v podman-compose >/dev/null 2>&1; then \
 		printf '%s' podman-compose; \
-	elif command -v podman >/dev/null 2>&1 && podman compose version >/dev/null 2>&1; then \
-		printf '%s' 'podman compose'; \
 	elif command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then \
 		printf '%s' 'docker compose'; \
+	elif command -v podman >/dev/null 2>&1 && podman compose version >/dev/null 2>&1; then \
+		printf '%s' 'podman compose'; \
 	else \
 		printf '%s' docker-compose; \
 	fi \

@@ -22,7 +22,10 @@ qa:
     - apk add --no-cache make
 
   script:
-    - make ci
+    - docker compose version
+    # Same reason as the GitHub workflow: name the compose command rather
+    # than let the Makefile probe for one.
+    - make COMPOSE="docker compose" ci
 
   after_script:
     - docker compose logs --no-color || true
