@@ -43,3 +43,22 @@ setup fails the test instead of quietly mutating development data. That base
 class also offers `truncateAllTables()` for a clean slate between tests.
 
 Run `make db-migrate-test` after adding a migration so the test database keeps up.
+
+## Container startup
+
+Both the development and the production image run the same entrypoint,
+[containers/images/php/init.sh](containers/images/php/init.sh). It installs
+Composer dependencies when they are missing or older than `composer.lock` (the
+production image bakes them in at build time, so it skips), waits for the
+database to accept connections, and only then execs `php-fpm`, which therefore
+runs as PID 1 and receives signals. Any failing step aborts the startup instead
+of leaving a half-initialised container serving requests.
+
+Migrations are not part of that sequence — schema changes stay an explicit
+`make db-setup`, never a side effect of starting a container.
+
+Once the sequence finishes, the script creates `/tmp/app-ready`. That file is
+the `php` service's healthcheck, so `web` waits for a genuinely initialised
+application rather than for a process that merely started. `db` reports health
+through `pg_isready`, and `php` waits for it. The wait loop inside `init.sh`
+covers the same ground for environments that run the image without Compose.

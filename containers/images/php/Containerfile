@@ -21,9 +21,12 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN docker-php-ext-install pdo_pgsql
 
+COPY ./containers/images/php/init.sh /docker-entrypoint-init.d/init.sh
+RUN chmod +x /docker-entrypoint-init.d/init.sh
+
 EXPOSE 9000
 
-CMD ["php-fpm"]
+CMD ["/docker-entrypoint-init.d/init.sh"]
 
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -37,10 +40,6 @@ RUN apk add --no-cache --virtual .build-deps \
         && apk del .build-deps
 
 COPY ./containers/images/php/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-
-COPY ./containers/images/php/init.sh /docker-entrypoint-init.d/init.sh
-
-CMD ["/docker-entrypoint-init.d/init.sh"]
 
 #-----------------------------------------------------------------------------------------------------------------------
 
