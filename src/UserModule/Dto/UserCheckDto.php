@@ -9,7 +9,7 @@ use JsonSerializable;
 class UserCheckDto implements JsonSerializable {
 	public function __construct(
 		private ?bool $emailAvailable = null,
-		private ?bool $usernameAvailable = null
+		private ?bool $usernameAvailable = null,
 	) {
 	}
 

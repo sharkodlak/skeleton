@@ -14,7 +14,7 @@ use InvalidArgumentException;
 
 class UserCrudService {
 	public function __construct(
-		private readonly UserRepository $userRepository
+		private readonly UserRepository $userRepository,
 	) {
 	}
 

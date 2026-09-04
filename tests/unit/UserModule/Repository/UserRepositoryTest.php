@@ -26,7 +26,7 @@ class UserRepositoryTest extends TestCase {
 			->method('findUserById')
 			->willReturn($user);
 		
-		$this->assertEquals($user, $this->userRepository->findUserById($userId->getValue()));
+		self::assertEquals($user, $this->userRepository->findUserById($userId->getValue()));
 	}
 
 	protected function setUp(): void {

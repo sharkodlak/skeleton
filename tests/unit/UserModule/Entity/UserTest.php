@@ -16,6 +16,6 @@ class UserTest extends TestCase {
 		$username = new UserName('test');
 		$mail = new Email('test@test.example');
 		$user = new User($userId, $username, $mail);
-		$this->assertSame('123', $user->getId()->getValue());
+		self::assertSame('123', $user->getId()->getValue());
 	}
 }

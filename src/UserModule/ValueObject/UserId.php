@@ -6,7 +6,7 @@ namespace App\UserModule\ValueObject;
 
 class UserId {
 	public function __construct(
-		private readonly string $value
+		private readonly string $value,
 	) {
 	}
 

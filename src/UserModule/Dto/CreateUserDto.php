@@ -9,7 +9,7 @@ use JsonSerializable;
 class CreateUserDto implements JsonSerializable {
 	public function __construct(
 		private readonly string $username,
-		private readonly string $email
+		private readonly string $email,
 	) {
 	}
 

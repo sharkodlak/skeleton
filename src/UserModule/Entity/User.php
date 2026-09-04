@@ -13,7 +13,7 @@ class User implements JsonSerializable {
 	public function __construct(
 		private readonly UserId $id,
 		private readonly UserName $username,
-		private readonly Email $email
+		private readonly Email $email,
 	) {
 	}
 

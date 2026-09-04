@@ -22,7 +22,7 @@ use PDOStatement;
  */
 class UserRepositoryImpl implements UserRepository {
 	public function __construct(
-		private readonly PDO $pdo
+		private readonly PDO $pdo,
 	) {
 	}
 
@@ -45,19 +45,19 @@ class UserRepositoryImpl implements UserRepository {
 
 	public function findUserByEmail(string $email): ?User {
 		$stmt = $this->pdo->prepare('SELECT user_id, username, email FROM users WHERE email = :email');
-		$stmt->execute(['email' => $email]);
+		$stmt->execute([ 'email' => $email ]);
 		return $this->fetch($stmt);
 	}
 
 	public function findUserById(string $id): ?User {
 		$stmt = $this->pdo->prepare('SELECT user_id, username, email FROM users WHERE user_id = :id');
-		$stmt->execute(['id' => $id]);
+		$stmt->execute([ 'id' => $id ]);
 		return $this->fetch($stmt);
 	}
 
 	public function findUserByUsername(string $username): ?User {
 		$stmt = $this->pdo->prepare('SELECT user_id, username, email FROM users WHERE username = :username');
-		$stmt->execute(['username' => $username]);
+		$stmt->execute([ 'username' => $username ]);
 		return $this->fetch($stmt);
 	}
 
@@ -69,11 +69,14 @@ class UserRepositoryImpl implements UserRepository {
 			return null;
 		}
 
-		$userId = new UserId($row['user_id']);
-		$username = new UserName($row['username']);
-		$email = new Email($row['email']);
+		$userId = $row['user_id'];
+		$username = $row['username'];
+		$email = $row['email'];
+		\assert(\is_string($userId), 'Unexpected user_id type');
+		\assert(\is_string($username), 'Unexpected username type');
+		\assert(\is_string($email), 'Unexpected email type');
 
-		return new User($userId, $username, $email);
+		return new User(new UserId($userId), new UserName($username), new Email($email));
 	}
 
 	private function validateNewUser(CreateUserDto $newUser): void {
