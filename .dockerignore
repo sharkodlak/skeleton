@@ -10,6 +10,9 @@
 /docker-compose.override.yml
 /docker-compose.override.example.yml
 
+# Claude Code
+/.claude
+
 # IDE and editors
 /.editorconfig
 /.idea

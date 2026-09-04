@@ -63,8 +63,9 @@ fix: ## Run code formatter
 in: ## Open a shell in a service, same as exec
 	@$(MAKE) --silent exec SERVICE=$(SERVICE) $(ARGS)
 
-install: ## Create .env from .env.example (if missing) and start the stack
+install: ## Create the local .env and compose override (if missing) and start the stack
 	@test -f .env || cp .env.example .env
+	@test -f docker-compose.override.yml || cp docker-compose.override.example.yml docker-compose.override.yml
 	@$(MAKE) --silent start
 
 restart: ## Restart the stack

@@ -1,0 +1,20 @@
+# Development overrides, merged on top of docker-compose.yml automatically.
+#
+# Copy to docker-compose.override.yml (`make install` does it for you). The copy
+# is not versioned, so local tweaks — extra ports, an extra service, a different
+# build target — stay yours. docker-compose.yml alone describes the production
+# shape of the stack, which is what gets deployed.
+services:
+    php:
+        build:
+            target: development
+        volumes:
+            # Serve the working tree instead of the code baked into the image.
+            - ./:/app:cached
+            # Share the host's Composer cache so a rebuilt container is not a cold start.
+            - ~/.composer:/root/.composer:delegated
+
+    web:
+        volumes:
+            # Static assets are copied into the image; mount them for live edits.
+            - ./public:/app/public:cached

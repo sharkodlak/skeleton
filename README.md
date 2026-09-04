@@ -11,9 +11,17 @@ Use main as the baseline when creating a new framework-specific branch.
 make install
 ```
 
-`make install` copies `.env.example` to `.env` (only when `.env` does not exist yet)
-and starts the containers. `.env` is not versioned — keep local secrets there and
-mirror every new variable back into `.env.example`.
+`make install` creates the two local files from their `.example` counterparts —
+`.env` and `docker-compose.override.yml` — and starts the containers. Neither
+copy is versioned: keep local secrets and local stack tweaks there, and mirror
+every new `.env` variable back into `.env.example`.
+
+`docker-compose.yml` on its own describes the **production** shape of the stack:
+the `production` build target, no bind mounts, static assets baked into the nginx
+image. The override adds what only development wants — the working tree mounted
+over the image, the `development` build target with Xdebug, the host's Composer
+cache. What you deploy is therefore what the base file says, not a stripped-down
+variant of your dev setup.
 
 Then prepare the databases:
 

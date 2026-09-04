@@ -24,10 +24,7 @@ services:
         build:
             dockerfile: containers/images/php/Containerfile
             context: .
-            target: development
-        volumes:
-            - ./:/app:cached
-            - ~/.composer:/root/.composer:delegated
+            target: production
         working_dir: /app
         env_file:
             - .env
@@ -46,11 +43,8 @@ services:
         build:
             dockerfile: containers/images/nginx/Containerfile
             context: .
-        volumes:
-            - ./:/app:cached
         environment:
             - NGINX_SERVER_NAME=localhost
-        working_dir: /app
         ports:
             - '8080:80'
         depends_on:

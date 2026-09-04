@@ -1,3 +1,14 @@
 FROM docker.io/library/nginx:mainline-alpine
 
-COPY ./containers/images/nginx/site.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+
+# Defaults that make the image usable on its own; compose overrides them.
+ENV NGINX_SERVER_NAME=localhost \
+    PHP_UPSTREAM=php:9000
+
+# The entrypoint of the nginx image expands ${...} in /etc/nginx/templates only.
+# A config placed straight into conf.d/ keeps the placeholders verbatim.
+COPY ./containers/images/nginx/site.conf.template /etc/nginx/templates/default.conf.template
+
+# Static assets travel with the image, so the container needs no bind mount.
+COPY ./public /app/public

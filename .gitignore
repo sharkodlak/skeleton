@@ -1,6 +1,11 @@
-# Local environment (copy .env.example to .env)
+# Local environment (copy the .example files, `make install` does it for you)
 /.env
 /.env.local
+/docker-compose.override.yml
+
+# Claude Code: share the project settings, keep everything local out
+/.claude/*
+!/.claude/settings.json
 
 # Composer dependencies
 /vendor/
