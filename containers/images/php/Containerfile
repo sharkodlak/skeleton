@@ -1,6 +1,7 @@
 FROM docker.io/library/php:8.5.9-fpm-alpine AS base
 
 COPY ./containers/images/php/php-fpm.conf /usr/local/etc/php-fpm.d/zzz_custom.conf
+COPY ./containers/images/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 RUN apk add --no-cache \
         bash \
@@ -39,7 +40,12 @@ RUN apk add --no-cache --virtual .build-deps \
         && docker-php-ext-enable xdebug \
         && apk del .build-deps
 
-COPY ./containers/images/php/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+COPY ./containers/images/php/conf.d/xdebug.ini /usr/local/etc/php/conf.d/zz-xdebug.ini
+COPY ./containers/images/php/conf.d/dev.ini /usr/local/etc/php/conf.d/zz-dev.ini
+
+# Xdebug 3 reads this itself. Off by default: an always-on debugger or coverage
+# instrumentation slows every request and every test run.
+ENV XDEBUG_MODE=off
 
 #-----------------------------------------------------------------------------------------------------------------------
 
